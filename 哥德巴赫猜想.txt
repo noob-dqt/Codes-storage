@@ -1,0 +1,52 @@
+给定一个大于4的偶数可以写成两个奇素数的和例如：8=3+5、20=3+17……
+demo:(功能：输入一个不为0的n,求出n是否能被表达成两个奇素数之和，若不能表示输出"Goldbach's conjecture is wrong.")
+#include<iostream>
+#include<cmath>
+#include<string>
+#include<string.h>
+#include<set>
+#include<vector>
+#include<algorithm>
+using namespace std;
+const int N = 1000005;
+typedef long long int ll;
+int prime[N];
+bool Is_Prime[N];
+int getPrime(int n)	//求n以内的素数 
+{
+    int primesize=1;
+    memset(Is_Prime,true,sizeof(Is_Prime));
+    Is_Prime[1]=false;
+    for(int i=2;i<=n;i++)
+    {
+        if(Is_Prime[i]) prime[primesize++]=i;//筛中最小数送入素数表
+        for(int j=1;j<primesize;j++)	  //顺序搜遍历素数表中的每个数
+         {
+            if(i*prime[j]>n) break;
+            Is_Prime[i*prime[j]]=false;
+            if(i%prime[j]==0) break;
+        }
+    }
+    return 0;
+}
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);                         
+    int n;
+    getPrime(N);
+
+    while(cin>>n&&n){
+        int f=0;
+        int i,fr,sec;
+        for(i=1;2*prime[i]<=n;i++){
+            if(Is_Prime[n-prime[i]])
+            {
+                f=1;fr=prime[i];sec=n-prime[i];
+                break;
+            }
+        }
+        if(f) printf("%d = %d + %d\n",n,fr,sec);
+        else printf("Goldbach's conjecture is wrong.\n");
+    }
+    return 0;
+}

@@ -1,0 +1,64 @@
+//详请参考算法竞赛入门到进阶-罗勇军·郭卫斌·第四章
+#include<bits/stdc++.h>
+using namespace std;
+int a[10]={1,2,3,4,5,6,7,8,9,10};
+int num;
+int num1;
+int generate(int begin,int end){		//产生排列
+	if(begin==end){
+	// if(begin==3){					//10个数中任取3个数的全排列:C(10,3)*A(3,3)
+		// for(int i=0;i<3;i++)
+		// cout<<a[i]<<' ';
+		for(int i=0;i<10;i++)			//
+		cout<<a[i]<<' ';
+		cout<<endl;
+		num++;							//根据需要统计排列数
+	}
+	else
+	{
+		for(int i=begin;i<=end;i++){	//逐个与后面的数交换产生排列
+			swap(a[begin],a[i]);
+			generate(begin+1,end);
+			swap(a[begin],a[i]);		//递归结束后恢复原样，准备下一次交换
+		}
+	}
+	return 0;
+}
+int print_sub(int n){
+	for(int i=0;i<(1<<n);i++)
+	{
+		for(int j=0;j<n;j++)
+		if(i&(1<<j))
+		cout<<j<<' ';
+		cout<<endl;
+	}
+	return 0;
+}
+int print_sub_k(int n,int k){		//求C(k,n)
+	for(int i=0;i<(1<<n);i++)
+	{
+		int cnt=0,kk=i;
+		while (kk)
+		{
+			kk=kk&(kk-1);
+			cnt++;			//kk(i)中1的个数
+		}
+		if(k==cnt){			//元素个数满足了才统计、输出子集
+			for(int j=0;j<n;j++)
+				if(i&(1<<j))
+				cout<<j<<' ';
+			cout<<endl;
+			num1++;
+		}
+	}
+	return 0;
+}
+int main(){	
+	// generate(0,9);			//从下标0~9的十个数中产生所有排列
+	// generate(0,3);			//从0~3的四个数中产生所有排列
+	// cout<<num;				//记录排列数
+	// print_sub(3);			//元素个数为3的所有集合
+	// print_sub_k(3,2);		//产生元素个数为3的集合的所有子集中元素个数为k的所有子集，即求解组合数C(3,k);
+	// cout<<num1;
+	return 0;
+}

@@ -1,0 +1,108 @@
+众所周知，gyt喜欢玩“美男有毒”这款游戏，在这款游戏里，gyt一夜之间无辜“被穿越”，没有倾城之貌也就算了，竟然还自带称号“帝都第一丑女”!王妃梦碎，老爹嫌弃，继母暗害，到底能信任何人，日子真要过得如此凄惨吗?
+就在这困难之际，天神伸出援手，告诉gyt，只要gyt答对了一个问题就可以穿越回现代，然而gyt太菜了，不知道这个问题的答案是什么，快来帮他回答吧。
+谢尔宾斯基三角形是这样一类图形，当你输入n可以得到以下图形：
+n=0:
+ *
+* *
+n=1:
+   *
+  * *
+ *   *
+* * * *
+n=2:
+       *
+      * *
+     *   *
+    * * * *
+   *       *
+  * *     * *
+ *   *   *   *
+* * * * * * * *
+可以发现，n号谢尔宾斯基三角形是由三个n-1号谢尔宾斯基三角形拼接得来的，现在天神给你一个n，要求你输出相应的谢尔宾斯基三角形。
+输入
+第一行一个正整数t，表示样例个数。
+接下来t行，每行一个非负数n(n<10)
+
+
+输出
+对于每一个n，输出相应的谢尔宾斯基三角形（注意每一行的最后一个*后面均无空格）
+样例输入 Copy
+3
+0
+1
+2
+样例输出 Copy
+ *
+* *
+   *
+  * *
+ *   *
+* * * *
+       *
+      * *
+     *   *
+    * * * *
+   *       *
+  * *     * *
+ *   *   *   *
+* * * * * * * *
+观察谢尔宾斯基三角形，将其分为三部分，左下角、右下角，左上角，不断缩小范围，直到三角形不能再分为止(即n等于0时的三角形是该图形的基础)
+代码：
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 1e5+50;
+const int inf = 0x3f3f3f3f;
+#define reset(x) memset(x, 0, sizeof(x))
+#define Q_in_out ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+typedef long long int ll;
+typedef long double ld;
+typedef pair<int, int> P;
+char s[3000][3000];
+int n;
+int draw(int xl,int yl,int mx,int my,int xr,int yr){
+    if(yl+2==yr&&xl==xr&&mx==xl-2&&my==yl+1){
+        s[xl][yl]='*';s[xr][yr]='*';
+        s[mx][my]='*';
+        return 0;
+    }
+    int tx=xr,ty=my-1;
+    draw(xl,yl,(xl+mx)/2+1,(yl+ty)/2,tx,ty);     //画左下角
+    tx=xl;ty=my+1;
+    draw(tx,ty,(xl+mx)/2+1,(yr+ty)/2,xr,yr);   //画右下角
+    draw((xl+mx)/2-1,(my+yl)/2+1,mx,my,(xl+mx)/2-1,(yr+my)/2);    //画上方
+    return 0;
+}
+int solve()
+{
+    memset(s,' ',sizeof(s));
+    cin>>n;
+    int t;
+    t=1<<(n+1);
+    draw(2*t-1,1,1,t,2*t-1,2*t-1);
+    int cnt=t;
+    for(int i=1;i<2*t;i++)
+    {
+        if(i%2==0){
+            cout<<endl;
+            cnt++;
+            continue;
+        }
+        for(int j=1;j<=cnt;j++)
+        cout<<s[i][j];
+        cnt++;
+    }
+    return 0;
+}
+int main()
+{
+    Q_in_out
+    int t;
+    cin>>t;
+    // t=1;
+    while(t--)
+    {
+        solve();
+        cout<<endl;
+    }
+    return 0;
+}

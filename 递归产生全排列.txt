@@ -1,0 +1,27 @@
+#include<bits/stdc++.h>
+using namespace std;
+int a[10]={1,2,3,4,5,6,7,8,9,10};
+int num;
+int generate(int begin,int end){
+	if(begin==end){
+	// if(begin==3){					//10个数中任取3个数的全排列:C(10,3)*A(3,3)
+		for(int i=0;i<4;i++)
+		cout<<a[i]<<' ';
+		cout<<endl;
+		num++;							//根据需要统计排列数
+	}
+	else
+	{
+		for(int i=begin;i<=end;i++){	//逐个与后面的数交换产生排列
+			swap(a[begin],a[i]);
+			generate(begin+1,end);
+			swap(a[begin],a[i]);		//递归结束后恢复原样，准备下一次交换
+		}
+	}
+	return 0;
+}
+int main(){	
+	generate(0,9);
+	cout<<num;
+	return 0;
+}

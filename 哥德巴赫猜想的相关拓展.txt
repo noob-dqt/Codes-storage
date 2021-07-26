@@ -1,0 +1,60 @@
+给定一个数n，若该数为奇数，则n-2-3为偶数，若该数为偶数，则n-2-2为偶数，这两种情况下的n-2-3(or n-2-2)若大于4，
+则问题转化为求大于4的偶数能否转化为两个奇素数之和。若能求出两个素数连同2、3(2、2)作为解。
+demo(给定一个n，求出n是否能表达为四个素数之和)
+#include<iostream>
+#include<cmath>
+#include<string>
+#include<string.h>
+#include<set>
+#include<vector>
+#include<algorithm>
+using namespace std;
+const int N = 10000005;
+#define Q_in_out ios::sync_with_stdio(false);cin.tie(0);
+typedef long long int ll;
+int prime[N];
+bool Is_Prime[N];
+int getPrime(int n)	//求n以内的素数 
+{
+    int primesize=1;
+    memset(Is_Prime,true,sizeof(Is_Prime));
+    Is_Prime[1]=false;
+    for(int i=2;i<=n;i++)
+    {
+        if(Is_Prime[i]) prime[primesize++]=i;//筛中最小数送入素数表
+        for(int j=1;j<primesize;j++)	  //顺序搜遍历素数表中的每个数
+         {
+            if(i*prime[j]>n) break;
+            Is_Prime[i*prime[j]]=false;
+            if(i%prime[j]==0) break;
+        }
+    }
+    return 0;
+}
+int main(){                 
+    Q_in_out
+    getPrime(N);
+    int n;
+    while(cin>>n){
+        int a1,a2,a3,a4;
+        int f=0,i;
+        if(n%2==0){
+            a1=2;a2=2;n-=4;
+        }
+        else
+        {
+            a1=2;a2=3;n-=5;
+        }
+        for(i=1;prime[i]*2<=n;i++){
+            if(Is_Prime[n-prime[i]])
+            {
+                a3=prime[i];a4=n-prime[i];
+                f=1;
+                break;
+            }
+        }
+        if(f) printf("%d %d %d %d\n",a1,a2,a3,a4);
+        else printf("Impossible.\n");
+    }
+    return 0;
+}

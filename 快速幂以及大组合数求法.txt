@@ -1,0 +1,115 @@
+//递归算法（递归调用栈占用空间）
+#include<iostream>
+using namespace std;
+typedef long long ll;           //(a^b)%p
+ll Q_Mod(ll a,ll b,int p){
+    if(b==0) return 1%p;
+    else if(b%2==1){//奇数次幂
+        return Q_Mod(a,b-1,p)*a%p;
+    }
+    else{
+        ll x=Q_Mod(a,b/2,p)%p;
+        return x*x%p;
+    }
+}
+int main(){
+    ll a,b;
+    int p;
+    cin>>a>>b>>p;
+    cout<<Q_Mod(a,b,p);
+    return 0;
+}
+
+
+思想：
+以3^10为例：
+3^10=(3*3)*(3*3)*(3*3)*(3*3)*(3*3)
+=>
+3^10=(3*3)^5
+=>
+3^10=9^5
+缩小了指数，扩大了底数，同时底数可以modp保证不超出p的范围。
+至于a=(a*a)%mod，指数除以2后，底数平方，9^5modp=(9*9*9*9*9)modp=[(9modp)*(9modp)*(9modp)*(9modp)*(9modp)]modp
+=(9modp)^5modp。
+//非递归
+#include<iostream>
+// #include<vector>
+// #include<string.h>
+using namespace std;
+typedef long long ll;           //(a^b)%p
+ll Q_pow(ll a,ll b,ll mod){     //(a^b)%mod
+    ll res=1;
+    a%=mod;
+    while(b){
+        if(b&1)	//判断二进制最后一位：偶次幂指数除以2，奇次幂运算(将当前底数乘入res中)
+        res=(res*a)%mod;
+        a=(a*a)%mod;    //b右移一位，a的指数以2的倍数变化来补（二进制）
+        b>>=1;
+    }
+    return res;
+}
+int main(){
+    ll a,b;
+    int p;
+    cin>>a>>b>>p;
+    cout<<Q_Mod(a,b,p);
+    return 0;
+}
+
+//以上两种方法若只是求a^b将%p去掉即可
+
+//快速乘
+#include<iostream>
+using namespace std;
+typedef long long ll;           //a*b%p
+ll Q_Mul(ll a,ll b,ll p){
+    ll res=0;
+    while(b){
+        if(b&1)
+        res=(res+a)%p;
+        a=(2*a)%p;                //a每一步都变为之前两倍
+        b>>=1;                 //屏蔽字左移一位
+    }
+    return res;
+}
+int main(){
+    ll a,b,p;
+    cin>>a>>b>>p;
+    cout<<Q_Mul(a,b,p);
+    return 0;
+}
+
+
+Lucas定理求组合数C(n,m),C(n,m)=n!/(m!*(n-m)!),并且要求模数p为素数：
+ll Q_pow(ll a,ll b,ll p){     //(a^b)%p
+    ll res=1;
+    while(b){
+        if(b&1)
+        res=(res*a)%p;
+        a=(a*a)%p;
+        b>>=1;
+    }
+    return res;
+}
+ll Comb(ll n, ll m ,ll p)
+{
+    if (n < m)
+        return 0;
+    // c(n,m) = n!/m!/(n-m)!
+    ll res = 1;
+    for (int i = 1; i <= m; i++)
+    {
+        ll a = (n + i - m) % p;
+        ll b = i % p;
+        res = res * (a * Q_pow(b, p - 2,p) % p) % p;
+    }
+    return res;
+}
+
+ll Lucas(ll n, ll m,ll p)    //p必须是一个素数定理才成立
+{
+    if (m == 0)
+        return 1;
+    return Comb(n % p, m % p,p) * Lucas(n / p, m / p,p) % p;
+}
+例如，C(n,m)对1e9+7取模结果即为Lucas(n,m,1e9+7);

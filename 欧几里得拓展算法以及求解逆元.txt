@@ -1,0 +1,21 @@
+贝祖定理：如果a、b是整数，那么一定存在整数x、y使得ax+by=gcd(a,b)。
+换句话说，如果ax+by=m有解，那么m一定是gcd(a,b)的若干倍。（可以来判断一个这样的式子有没有解）
+有一个直接的应用就是 如果ax+by=1有解，那么gcd(a,b)=1；
+（欧几里得）辗转相除求最大公因数：
+int gcd(int a,int b){
+    return b==0 ? a : gcd(b,a%b);
+}
+扩展欧几里得：找满足ax+by=gcd(a,b)的解x,y
+int exgcd(int a,int b,int &x,int &y){
+    if(b==0){
+        x=1;
+        y=0;
+        return a;
+    }
+    int t=exgcd(b,a%b,x,y);
+    //计算当前a,b状态下的x,y，并返回给递归的上一层状态
+    int x0=x,y0=y;	//先把上层递归结果x,y暂存
+    x=y0;
+    y=x0-(a/b)*y0;
+    return t;	//t为a,b最大公约数
+}
