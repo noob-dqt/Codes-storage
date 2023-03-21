@@ -1,0 +1,65 @@
+二叉堆基本操作及其实现：用数组实现,1为根
+插入操作：在数组的末尾插入数据，并从该节点开始往根节点调整直至满足大根堆的性质，总复杂度logn
+void insert(int val,int pos){   //插入操作
+    heap[pos]=val;
+    up_adjust(pos);
+}
+删除操作:
+1.将堆顶元素删除：交换heap[1],heap[n](最后一个元素)，然后移除最后一个元素(可以是将n减一)，最后向下调整堆顶。
+void pop(){
+    heap[1]=heap[n--];
+    down_adjust(1);
+}
+2.删除下标为p的节点:交换heap[1],heap[n](最后一个元素)，同时对p向上、向下进行调整
+void Remove(int p){
+    heap[p]=heap[n--];
+    up_adjust(p);
+    down_adjust(p);
+}
+
+
+大根堆：任意一节点权值都小于父节点即为大根堆，堆顶(根节点)为最大值。
+void down_adjust(int p){
+    int s=p*2;  //p的左子
+    while(s<=n){
+        if(s<n&&heap[s]<heap[s+1]) s++;     //选左右子最大的
+        if(heap[s]>heap[p]){
+            swap(heap[p],heap[s]);
+            p=s;
+            s=p*2;
+        }
+        else break;
+    }
+}
+void up_adjust(int p){      //调整某个节点
+    while(p>1){
+        if(heap[p]>heap[p/2]) {
+            swap(heap[p],heap[p/2]);
+            p/=2;
+        }
+        else break;
+    }
+}
+
+小根堆：任意一节点权值都大于等于父节点的权值，堆顶(根节点)为最小值。
+void up_adjust(int p){      //调整某个节点
+    while(p>1){
+        if(heap[p]<heap[p/2]) {
+            swap(heap[p],heap[p/2]);
+            p/=2;
+        }
+        else break;
+    }
+}
+void down_adjust(int p){
+    int s=p*2;  //p的左子
+    while(s<=n){
+        if(s<n&&heap[s]>heap[s+1]) s++;     //选左右子最小的
+        if(heap[s]<heap[p]){
+            swap(heap[p],heap[s]);
+            p=s;
+            s=p*2;
+        }
+        else break;
+    }
+}

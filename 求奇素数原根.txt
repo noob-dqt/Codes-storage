@@ -1,0 +1,45 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+vector<ll>factor;//存放phi(n)公因数
+vector<ll>res;  //存放原根
+ll n;
+ll Q_Mod(ll a,ll b,ll mod){ 
+    ll res=1;
+    while(b){
+        if(b&1)
+        res=(res*a)%mod;
+        a=(a*a)%mod;
+        b>>=1;
+    }
+    return res;
+}
+bool jg(ll x){
+    bool flag=true;
+    for(int i=0;i<factor.size();i++){
+        if(Q_Mod(x,factor[i],n)==1){
+            flag=false;
+            break;
+        }
+    }
+    return flag;
+}
+int Get_primitive_root(ll n){//求modn的所有原根,n是奇素数
+    ll k=n-1;       //欧拉函数值
+    for(ll i=1;i<k;i++)
+    {
+        if(k%i==0)
+        factor.push_back(i);
+    }
+    for(ll i=2;i<n;i++){
+        if(jg(i))
+        res.push_back(i);
+    }
+    return 0;
+} 
+int main(){
+    cin>>n;         
+    Get_primitive_root(n);
+    for(auto it:res) cout<<it<<endl;
+    return 0;
+}

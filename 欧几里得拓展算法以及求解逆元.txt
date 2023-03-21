@@ -19,3 +19,15 @@ int exgcd(int a,int b,int &x,int &y){
     y=x0-(a/b)*y0;
     return t;	//t为a,b最大公约数
 }
+
+费马小定理
+
+∵ap≡a(modp)∴ap−2≡1a(modp)
+所以说a^(-1)≡a^(p-2)(modp)
+复杂O(logp)
+
+扩展欧几里得
+ax+py=1的一组解 (x,y) ，x 是 a 关于 p 的逆元， y 是 p 关于 a 的逆元
+证明：两边同时模 p，ax+py=1ax%p+py%p=1%p，ax%p=1%p，ax≡1(modp)
+所以 x 是 a 关于 p 的逆元，反之可以证明 y
+复杂O(logp)

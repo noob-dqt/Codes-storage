@@ -1,0 +1,16 @@
+每个大于1的正整数都可分解为一系列质数的乘积
+//decomp(n)分解出n的所有质因数
+void decomp(int n){
+    for(int i=2;i*i<=n;i++){
+        if(n%i==0){
+            int cnt=0;
+            while (n%i==0)
+            {
+                cnt++;
+                n/=i;   
+            }
+            cout<<i<<' '<<cnt<<'\n';    //i是质数，cnt是对应分解出的数量
+        }
+    }
+    if(n>1) cout<<n<<" 1\n";    //可能还剩下一个质数
+}

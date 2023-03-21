@@ -1,0 +1,25 @@
+用于求解环形字符串/数组字典序的最小表示
+例如"34512"最小表示为"12345"
+int getsm(string &a){	//具体数据类型根据需求决定
+    int len=a.size();
+    string tmp;
+    for(int i=0;i<len*2;i++) tmp.push_back(a[i%len]);
+    int i=0,j=1;
+    while (i<len&&j<len)
+    {
+        int k=0;
+        while(k<len&&tmp[i+k]==tmp[j+k]) k++;
+        if(k==len) break;
+        if(tmp[i+k]>tmp[j+k]){
+            i+=k+1;
+            if(i==j) i++;
+        }
+        else{
+            j+=k+1;
+            if(i==j) j++;
+        }
+    }
+    int k=min(i,j);
+    for(int i=0;i<len;i++) a[i]=tmp[i+k];
+    return 0;
+}

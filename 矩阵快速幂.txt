@@ -1,0 +1,66 @@
+求斐波那契第n项为例：
+/*
+ * @Author: FingerDreamer 
+ * @Date: 2022-05-20 13:50:33 
+ * @Last Modified by: FingerDreamer
+ * @Last Modified time: 2022-05-20 16:31:05
+ */
+#include<bits/stdc++.h>
+using namespace std;
+#define reset(x) memset(x, 0, sizeof(x))
+const int inf=0x3f3f3f3f;
+typedef long long ll;
+const int modp = 1e9+7;
+const int N = 1e5+15;
+struct mat
+{
+    int n;    //n*n的矩阵
+    vector<vector<ll>>mtr;
+    mat(int x){
+        n=x;
+        mtr.resize(n,vector<ll>(n,0));
+    }
+};
+mat mul(mat A,mat B,ll mod)
+{
+    mat res(A.n);
+    for(int i=0;i<A.n;i++)
+        for(int j=0;j<B.n;j++)
+            for(int k=0;k<A.n;k++)
+                res.mtr[i][j]=(res.mtr[i][j]+A.mtr[i][k]*B.mtr[k][j]%mod)%mod;
+    return res;
+}
+mat qpow(mat A,ll n,ll mod)
+{
+    mat res=A;
+    while(n)
+    {
+        if(n&1)
+            res=mul(res,A,mod);
+        A=mul(A,A,mod);
+        n>>=1;
+    }
+    return res;
+}
+ll calcu(ll n)	
+{
+    mat C(2);
+    C.mtr[0][0]=1;C.mtr[0][1]=1;
+    C.mtr[1][0]=1;C.mtr[1][1]=0;
+    if(n==0) return 0;
+    if(n<2)  return 1;
+    else
+    {
+        mat res=qpow(C,n-2,10000);
+        return res.mtr[0][0];
+    }
+}
+int main() 
+{ 
+    int n;
+    while (cin>>n&&n!=-1)
+    {
+        cout<<calcu(n)<<'\n';
+    }
+    return 0; 
+}

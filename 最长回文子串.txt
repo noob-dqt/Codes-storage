@@ -1,0 +1,130 @@
+求解一个字符串的最长回文子串
+字符串哈希+二分查找：O(NlogN):
+#include <bits/stdc++.h>
+using namespace std;
+#define reset(x) memset(x, 0, sizeof(x))
+#define Q_in_out                 \
+    ios::sync_with_stdio(false); \
+    cin.tie(0);                  \
+    cout.tie(0);
+typedef long long int ll;
+typedef long double ld;
+typedef pair<int, int> P;
+#define forl(l, r) for (int i = l; i < r; i++)
+#define forr(r, l) for (int i = r; i >= l; i--)
+const int N = 1e6 + 5;
+const int modp = 99991;
+const int hsp = 131;
+const int inf = 0x3f3f3f3f;
+const double eps = 1e-6;
+const double pi = acos(-1.0);
+const double e = 2.718281828459045;
+char s[N*2];
+ll hl[N*2],hr[N*2],p[N*2];
+ll getl(int l,int r){       //获取正序哈希值
+    return hl[r]-hl[l-1]*p[r-l+1];
+}
+ll getr(int l,int r){       //获取逆序哈希值
+    return hr[r]-hr[l+1]*p[l-r+1];
+}
+int main() {
+    int cnt=1;
+    while (scanf("%s",s+1)&&strcmp(s+1,"END"))
+    {
+        int n=strlen(s+1);
+        for(int i=2*n;i>0;i-=2){
+            s[i]=s[i/2];
+            s[i-1]='#';
+        }
+        n*=2;
+        p[0]=1;
+        for(int i=1,j=n;i<=n;i++,j--){
+            hl[i]=hl[i-1]*hsp+s[i]-'a'+1;
+            hr[j]=hr[j+1]*hsp+s[j]-'a'+1;       //倒着存哈希值
+            p[i]=p[i-1]*hsp;
+        }
+        int res=0;
+        for(int i=2;i<=n;i++){      //s[1]是#可以跳过
+            int l=0,r=min(i-1,n-i);
+            while (l<r)
+            {
+                int m=l+r+1>>1;
+                if(getl(i-m,i-1)!=getr(i+m,i+1)) r=m-1;     //左右两端哈希值不一样，缩小答案
+                else l=m;
+            }
+            if(s[i-l]!='#') res=max(res,l+1);       //观察回文串首尾是否为#，来推算回文串长度
+            else res=max(res,l);        //如#c#两端是#，且l等于1，故回文长度为1,c#b#c,l=2,且两端不是#长度为l+1=3
+        }
+        printf("Case %d: %d\n",cnt++,res);
+    }
+    
+	return 0;
+}
+
+Manacher Algorithm:O(N):
+/*题目和第一种解法的题目是同一个*/
+#include <bits/stdc++.h>
+using namespace std;
+#define reset(x) memset(x, 0, sizeof(x))
+#define Q_in_out                 \
+    ios::sync_with_stdio(false); \
+    cin.tie(0);                  \
+    cout.tie(0);
+typedef long long int ll;
+typedef long double ld;
+typedef pair<int, int> P;
+#define forl(l,r) for(int i=l;i<r;i++) 
+#define forr(r,l) for(int i=r;i>=l;i--)
+const int N = 1e6+5;
+const int modp = 99991;
+const int hsp = 131;
+const int inf = 0x3f3f3f3f;
+const double eps = 1e-6;
+const double pi = acos(-1.0);
+const double e = 2.718281828459045;
+
+char s[N];
+char s_new[2*N];
+int p[2*N];
+
+int init() {
+    int len=strlen(s);
+    s_new[0]='$';
+    s_new[1]='#';
+    int j=2; 
+    for(int i=0;i<len;i++) {
+        s_new[j++]=s[i];
+        s_new[j++]='#';
+    } 
+    s_new[j]='\0';
+    return j;
+}
+
+int Manacher() {
+    int len=init();
+    int res=-1;
+    int id;
+    int mr=0;
+    for(int i=1;i<=len;i++) {
+        if(i<mr)
+            p[i]=min(p[2*id-i],mr-i);
+        else p[i]=1;
+        while(s_new[i-p[i]]==s_new[i+p[i]])
+            p[i]++;
+        if(mr<i+p[i]) { 
+            id=i; 
+            mr=i+p[i]; 
+        }
+        res=max(res,p[i]-1); 
+    } 
+    return res; 
+}
+int main(){
+    int cnt=1;
+    while (scanf("%s",s)&&strcmp(s,"END"))
+    {
+        printf("Case %d: %d\n",cnt++,Manacher());
+    }
+    
+    return 0; 
+}

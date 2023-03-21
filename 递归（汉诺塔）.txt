@@ -1,0 +1,55 @@
+汉诺塔的递归和非递归实现：
+#include<bits/stdc++.h>
+using namespace std;
+int prt(int f,int t){
+	printf("%c->%c\n",f-1+'a',t-1+'a');
+	return 0;
+}
+int hn(int n,int fr,int tmp,int to){	//递归函数
+	if(n==1){
+		prt(fr,to);
+		return 0;
+	}
+	hn(n-1,fr,to,tmp);
+	prt(fr,to);
+	hn(n-1,tmp,fr,to);
+	return 0;
+}
+struct hi
+{
+	int x;
+	int fr;
+	int tmp;
+	int to;
+};
+
+int solve(){		//栈模拟实现
+	int n;
+	scanf("%d",&n);
+	stack<hi>s;
+	s.push({n,1,2,3});
+	while (s.size())
+	{
+		hi tp=s.top();
+		s.pop();
+		if(tp.x==1){
+			prt(tp.fr,tp.to);
+		}
+		else {
+			s.push({tp.x-1,tp.tmp,tp.fr,tp.to});
+			s.push({1,tp.fr,tp.tmp,tp.to});
+			s.push({tp.x-1,tp.fr,tp.to,tp.tmp});
+		}
+	}
+	return 0;
+}
+int main(){
+	int t;
+	scanf("%d",&t);
+	while (t--)
+	{
+		// hn(3,1,2,3);
+		solve();
+	}
+	return 0;
+}

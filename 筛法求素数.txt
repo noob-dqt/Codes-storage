@@ -1,0 +1,37 @@
+bool pr[10050];
+int is_Prime(int n){			//小于n的素数
+	memset(pr,0,sizeof(pr));
+	int i,j;
+	pr[0]=pr[1]=1;		//0、1不是素数，所以单独处理 
+	pr[2]=0;
+	for(i=2;i*i<=n;i++)
+	{
+		if(pr[i]){
+			continue;
+		}
+		for(j=i;j*i<=n;j++)
+		pr[i*j]=1;
+	}
+	return 0;
+}
+线性筛：（可优化至O(n)）:
+const int n= 1000005;
+int prime[n];
+bool Is_Prime[n];
+int getPrime()	//求n以内的素数 
+{
+    int primesize=1;
+    memset(Is_Prime,true,sizeof(Is_Prime));
+    Is_Prime[1]=false;
+    for(int i=2;i<=n;i++)
+    {
+        if(Is_Prime[i]) prime[primesize++]=i;//筛中最小数送入素数表
+        for(int j=1;j<primesize;j++)	  //顺序搜遍历素数表中的每个数
+         {
+            if(i*prime[j]>n) break;
+            Is_Prime[i*prime[j]]=false;
+            if(i%prime[j]==0) break;
+        }
+    }
+    return 0;
+}

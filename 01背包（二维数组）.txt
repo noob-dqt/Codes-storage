@@ -25,6 +25,14 @@ int main(){                         //01背包：有n件物品背包总容积为
     return 0;
 }
 
+
+
+
+
+
+
+
+
 //若选择下标从0开始代码如下：
 #include<iostream>
 using namespace std;

@@ -1,0 +1,20 @@
+int trie[M][26];	//M设为字典树最大深度即可
+bool endc[N];	//字符串结尾标记
+int cnt;
+void insert(char s[]){
+    int p=0;
+    for(int i=0;i<strlen(s);i++){
+        int ch=s[i]-'a';
+        if(trie[p][ch]==0) trie[p][ch]=++cnt;
+        p=trie[p][ch];
+    }
+    endc[p]=1;
+}
+bool find(char s[]){
+    int p=0;
+    for(int i=0;i<strlen(s);i++){
+        p=trie[p][s[i]-'a'];
+        if(p==0) return false;
+    }
+    return endc[p];
+}

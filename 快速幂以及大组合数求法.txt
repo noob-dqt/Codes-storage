@@ -46,7 +46,7 @@ ll Q_pow(ll a,ll b,ll mod){     //(a^b)%mod
         a=(a*a)%mod;    //b右移一位，a的指数以2的倍数变化来补（二进制）
         b>>=1;
     }
-    return res;
+    return res%mod;
 }
 int main(){
     ll a,b;
@@ -80,7 +80,38 @@ int main(){
 }
 
 
-Lucas定理求组合数C(n,m),C(n,m)=n!/(m!*(n-m)!),并且要求模数p为素数：
+Lucas定理求组合数C(n,m),C(n,m)=n!/(m!*(n-m)!),并且要求模数p为素数：C(3,1)=3
+
+//下述模板简单好记，并且预处理了阶乘，效率高
+ll fact[15000];
+void init(){	//记得调用init初始化阶乘
+    fact[0]=1;
+    for(ll i=1;i<15000;i++)     //要预处理的范围应该是组合数C(m,n)中m最大可能值
+        fact[i]=(i*fact[i-1])%mod;
+}
+ll Q_pow(ll a,ll b,ll p){     
+    ll res=1;
+    while(b){
+        if(b&1)
+        res=(res*a)%p;
+        a=(a*a)%p;
+        b>>=1;
+    }
+    return res;
+}
+inline ll inv(ll x,ll p){
+    return Q_pow(x,p-2,p);
+}
+inline ll C(ll m, ll n, ll p)
+{
+    return m < n ? 0 : fact[m] * inv(fact[n], p) % p * inv(fact[m - n], p) % p;
+}
+inline ll lucas(ll m, ll n, ll p)
+{
+    return n == 0 ? 1 % p : lucas(m / p, n / p, p) * C(m % p, n % p, p) % p;
+}
+
+//下述模板效率没有上面高，但无需初始化
 ll Q_pow(ll a,ll b,ll p){     //(a^b)%p
     ll res=1;
     while(b){
@@ -112,4 +143,5 @@ ll Lucas(ll n, ll m,ll p)    //p必须是一个素数定理才成立
         return 1;
     return Comb(n % p, m % p,p) * Lucas(n / p, m / p,p) % p;
 }
+
 例如，C(n,m)对1e9+7取模结果即为Lucas(n,m,1e9+7);

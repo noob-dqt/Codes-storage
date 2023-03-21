@@ -1,0 +1,37 @@
+复杂度O(n^2)：
+const int N = 1005,MOD = 1e9+7;		//组合数会很大，按题目要求取模
+int a[N],C[N][N];				//C[i][j]=C(i,j),i在下,j在上
+void GetC()
+{
+	for(int i = 0;i < N;++i)
+	{
+		for(int j = 0;j <= i;++j)
+		{
+			if(!j)	C[i][j] = 1;
+			else C[i][j] = (C[i - 1][j] + C[i - 1][j - 1]) % MOD;
+		}
+	}
+}
+
+复杂度O(n):
+const int N = 200000 + 5;
+const int MOD = (int)1e9 + 7;		//若题目不需要取余，使用该法时可以将MOD取大一点
+int F[N], Finv[N], inv[N];//F是阶乘，Finv是逆元的阶乘
+void init(){
+    inv[1] = 1;
+    for(int i = 2; i < N; i ++){
+        inv[i] = (MOD - MOD / i) * 1ll * inv[MOD % i] % MOD;
+    }
+    F[0] = Finv[0] = 1;
+    for(int i = 1; i < N; i ++){
+        F[i] = F[i-1] * 1ll * i % MOD;
+        Finv[i] = Finv[i-1] * 1ll * inv[i] % MOD;
+    }
+}
+int comb(int n, int m){	//comb(n, m)就是C(n, m)
+    if(m < 0 || m > n) return 0;
+    return F[n] * 1ll * Finv[n - m] % MOD * Finv[m] % MOD;
+}
+int main(){
+    init();
+}

@@ -1,0 +1,7 @@
+n!约等于sqrt(2*pi*n)*(n/e)^n  (https://www.cnblogs.com/zhumengdexiaobai/p/8415053.html)
+用于估计n的阶乘，结合log(10)n+1可计算n!在十进制下的位数。即假设s=n!=sqrt(2*pi*n)*(n/e)^n
+则n!的位数为：lgs+1;
+若需要计算在其他进制下的位数，例如假设需要计算八进制下的位数，结果即为log(8)s+1，结合换底公式将log8换为
+以e为底的ln(c++中是函数log())即可计算。
+换底公式：log(a)b=log(c)b/log(c)a;
+例如log(8)3=ln3/ln8;

@@ -1,6 +1,7 @@
 //是质数返回1否则返回0
 bool is_Prime(int num)
 {
+    if(num<2) return 0;
     if(num ==2|| num==3 )   //两个较小数另外处理
         return 1 ;
     if(num %6!= 1&&num %6!= 5)   //不在6的倍数两侧的一定不是质数

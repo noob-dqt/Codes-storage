@@ -1,0 +1,224 @@
+Kruskal-适用于稀疏图，prim适用于点少的图（稠密图）
+
+
+Kruskal算法：思想是优先选最短边，但不能选两个端点都在同个集合的边，n个节点需要n-1条边（代码简洁高效，除非边的数量多到连
+nlogn都处理不了时才考虑用Prim算法）
+
+
+例题：给定n个节点m条边，接着m行输入，每行三个数字，第一二个数字分别代表边的两个节点，第三个数代表边的权值，求让图联通
+的最小权值，若不能联通输出-1
+代码：
+#include <bits/stdc++.h>
+using namespace std;
+#define reset(x) memset(x, 0, sizeof(x))
+#define Q_in_out                 \
+    ios::sync_with_stdio(false); \
+    cin.tie(0);                  \
+    cout.tie(0);
+typedef long long int ll;
+typedef long double ld;
+typedef pair<int, int> P;
+#define cd(x) scanf("%d",&x);
+#define forl(l,r) for(int i=l;i<r;i++) 
+#define forr(r,l) for(int i=r;i>=l;i--)
+const int N = 1e4+5;
+const int modp = 1e9+7;
+const int inf = 0x3f3f3f3f;
+const double eps = 1e-6;
+const double pi = acos(-1.0);
+const double e = 2.718281828459045;
+struct node
+{
+	int from;
+	int to;
+	int val;
+	bool operator<(const node&tp){
+		return val<tp.val;
+	}
+}a[3005];		//根据边的数量定
+int father[3005];	//根据节点数量定
+int Rank[3005];
+int init()
+{
+    for(int i=0;i<3005;i++)
+    {
+        father[i]=i;
+        Rank[i]=0;   // 初始树的高度为0
+    }
+    return 0;
+}
+int find(int x){
+	if(x==father[x]) return x;
+	return father[x]=find(father[x]);
+}
+int Union(int x,int y){		//将xy合并，朴素
+	int fax=find(x);
+	int fay=find(y);
+	if(fax==fay) return 0;
+	if(Rank[fax]<Rank[fay]){
+		father[fax]=fay;
+	}
+	else{
+		father[fay]=fax;
+		if(Rank[fax]==Rank[fay]) Rank[fax]++;
+	}
+	return 0;
+}
+int main(){
+	init();
+	int n,m;
+	cd(n);cd(m);
+	for(int i=0;i<m;i++){
+		scanf("%d%d%d",&a[i].from,&a[i].to,&a[i].val);
+	}
+	//按照价值升序排序
+	sort(a,a+m);
+	//依次选择
+	int cnt=0;//统计选入的边数
+	int sum=0;	//统计总价值
+	for(int i=0;i<m;i++){
+		if(find(a[i].from)!=find(a[i].to)){
+			sum+=a[i].val;
+			Union(a[i].from,a[i].to);
+			cnt++;
+		}
+		if(cnt==n-1) break;	//已经联通可以不遍历后面的边
+	}
+	if(cnt==n-1) cout<<sum;
+	else cout<<-1;
+	return 0;
+}
+
+
+
+
+
+#include<iostream>
+#include<cmath>
+#include<string.h>
+#include<set>
+#include<vector>
+#include<queue>
+#include<algorithm>
+using namespace std;
+#define N 200005
+typedef long long int ll;
+struct chainnode{
+    int x;                  //x->y,权值为price
+    int y;
+    int price;              //弧上的权值
+}a[N];
+ll res;
+bool cmp(chainnode x,chainnode y){
+    return x.price<y.price;                 //按权值升序排列
+}
+int findx(int x,int U[]){
+    if(x==U[x]) return x;
+    else{
+        U[x]=findx(U[x],U);
+        return U[x];
+    }
+}
+int judge(int x,int y,int U[]){
+    int a,b;
+    a=findx(x,U);
+    b=findx(y,U);
+    if(a==b) return 0;              //在同一个集合（同一棵树）
+    else{
+        U[b]=a;                     //约定并入左边的集合
+        return 1;
+    }
+}
+int Kruskal(chainnode a[],int n,int m){     //n个顶点m条边
+    int *U = new int[n+1];
+    for(int i=1;i<=n;i++)           //编号从1开始（非必要）
+    U[i]=i;
+    sort(a,a+m,cmp);
+    int counter=0;
+    for(int i=0;i<m;i++)
+    {
+        if(judge(a[i].x,a[i].y,U)){
+            res+=a[i].price;
+            counter++;
+        }
+        if(counter==n-1)
+        break;
+    }
+	if(counter!=n-1) res=-1;	//无解
+    delete []U;
+    return 0;
+}
+int main()
+{
+    int n,m;
+    cin>>n>>m;
+    for(int i=0;i<m;i++)
+        scanf("%d%d%lld",&a[i].x,&a[i].y,&a[i].price);
+    Kruskal(a,n,m);
+    cout<<res;
+    return 0;
+}
+
+Prim算法：算法思想：从第一个节点开始，设有两个集合V 和U，V代表已选定节点，U代表待处理的节点集合，开始将第一个节点
+放入V 中，每一步选取从集合V到集合U的最短权值的边，将边的另一个属于U的节点并入V中，逐次选取直到n-1条边
+例题：题面同上面Kruskal例题
+On^2做法：（n较小时能做）
+#include <bits/stdc++.h>
+using namespace std;
+#define reset(x) memset(x, 0, sizeof(x))
+#define Q_in_out                 \
+    ios::sync_with_stdio(false); \
+    cin.tie(0);                  \
+    cout.tie(0);
+typedef long long int ll;
+typedef long double ld;
+typedef pair<int, int> sP;
+#define cd(x) scanf("%d",&x);
+#define forl(l,r) for(int i=l;i<r;i++) 
+#define forr(r,l) for(int i=r;i>=l;i--)
+const int N = 1e3+5;
+const int modp = 1e9+7;
+const int inf = 0x3f3f3f3f;
+const double eps = 1e-6;
+const double pi = acos(-1.0);
+const double e = 2.718281828459045;
+int mp[N][N];
+int cost[N];
+bool vis[N];
+int n,m;
+int Prim(int x){	//从节点x开始算法，通常习惯从第一个节点开始
+	vis[x]=1;
+	for(int i=1;i<=n;i++) cost[i]=mp[x][i];
+	int sum=0;
+	for(int i=0;i<n-1;i++)		//只需要n-1条边
+	{
+		int key=-1;
+		for(int j=1;j<=n;j++){
+			if(!vis[j]&&(cost[j]<cost[key]||key==-1)) key=j;
+		}
+		sum+=cost[key];
+		vis[key]=1;
+		//更新cost数组/优先队列
+		for(int j=1;j<=n;j++){
+			if(!vis[j]&&mp[key][j]<cost[j]) cost[j]=mp[key][j];
+		}
+		if(sum>=inf){	//加了不连通的边直接退出
+			break;
+		}
+	}
+	if(sum>=inf) cout<<-1;
+	else cout<<sum;
+	return 0;
+}
+int main(){
+	int x,y,v;
+	int cnt=0;
+	memset(mp,0x3f,sizeof mp);
+	cd(n);cd(m);
+	for(int i=0;i<m;i++){
+		scanf("%d%d%d",&x,&y,&v);
+		mp[x][y]=mp[y][x]=min(v,mp[x][y]);	//防止重复边
+	}
+	Prim(1);
+	return 0;
+}

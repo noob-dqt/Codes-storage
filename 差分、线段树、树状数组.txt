@@ -1,0 +1,132 @@
+差分用于多次修改一次查询的情况，线段树用于多次查询(能接受1e5的数据量)
+
+差分：
+对于数组a[]，需要进行一系列操作，每次操作将数组a下标[l,r]中的每一个数都加上c，问多次修改后数组a变成什么了
+先求差分数组b[]，b[i]=a[i]-a[i-1]，特别的，b[1]=a[1]
+对于多次修改：需要将b[l]加上c，将b[r+1]减掉c
+最终还原数组a,a[1]=b[1]，a[i]=a[i-1]+b[i]
+代码可参考如下：
+b[1]=a[1];
+for(int i=2;i<=n;i++)
+{    
+        cin>>a[i];
+        b[i]=a[i]-a[i-1];
+}
+for(int i=1;i<=n;i++)
+        a[i]=b[i]+a[i-1];//此处a[0]初始化为0了
+
+线段树：
+例：有一个数组a,其中给定l,r，要求求出l,r中最大值和最小值，则线段树的存储结构、建树、更新、查询等基本操作如下：
+struct nd
+{
+    int l,r;
+    int maxv,minv;
+}t[N*4];		//通常开到数组长度4倍
+
+建树操作：
+void build(int p,int l,int r){	
+    t[p].l=l;t[p].r=r;
+    if(l==r){
+        t[p].maxv=t[p].minv=a[l];
+        return ;
+    }
+    int m=(l+r)>>1;
+    build(p*2,l,m);
+    build(p*2+1,m+1,r);
+    t[p].maxv=max(t[p*2].maxv,t[p*2+1].maxv);
+    t[p].minv=min(t[p*2].minv,t[p*2+1].minv);
+}
+
+查询操作：（查最大值）
+int query(int p,int l,int r){
+    if(l<=t[p].l&&r>=t[p].r) return t[p].maxv;
+    int m=(t[p].l+t[p].r)>>1;
+    int res=INT_MIN;
+    if(l<=m) res=max(res,query(p*2,l,r));
+    if(r>m) res=max(res,query(p*2+1,l,r));
+    return res;
+}
+
+单点修改操作：
+void change(int p,int x,int v){     //将a[x]修改为v
+    if(t[p].l==t[p].r) {
+        t[p].maxv=t[p].minv=v;
+        return ;
+    }
+    int m=(t[p].l+t[p].r)>>1;
+    if(x<=m) change(p*2,x,v);
+    else change(p*2+1,x,v);
+    t[p].maxv=max(t[p*2].maxv,t[p*2+1].maxv);
+    t[p].minv=min(t[p*2].minv,t[p*2+1].minv);
+}
+
+树状数组：维护序列前缀和、logN查询区间和，单点修改并维护序列前缀和
+int lowbit(int x){  //非负整数x在二进制下最低位的1及其后面所有0组成的数
+    return x&(-x);
+}
+void add(int x,int y){    //在a[x]增加值y并维护数组c
+    for(;x<=n;x+=lowbit(x)) c[x]+=y;
+}
+int ask(int x){     //查询1~x前缀和
+    int res=0;
+    for(;x>0;x-=lowbit(x)) res+=c[x];
+    return res;
+}
+区间[l,r]的和：ask(r)-ask(l-1);
+
+区间修改：
+区间修改相当于对差分数组进行单点修改：例题（https://www.acwing.com/problem/content/description/244/）
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+ 
+typedef long long LL;
+const int N=100010;
+int a[N],n,m;
+LL tr1[N],tr2[N];
+ 
+int lowbit(int x){
+    return x&-x;
+}
+ 
+void add(LL tr[],int x,LL c){
+    for(int i=x;i<=n;i+=lowbit(i))tr[i]+=c;
+}
+ 
+LL sum(LL tr[],int x){
+    LL res=0;
+    for(int i=x;i;i-=lowbit(i))res+=tr[i];
+    return res;
+}
+ 
+LL pre(int x){
+    return sum(tr1,x)*(x+1)-sum(tr2,x);
+}
+ 
+int main(){
+    scanf("%d%d",&n,&m);
+    for(int i=1;i<=n;i++){
+        scanf("%d",&a[i]);
+    }
+    for (int i = 1; i <= n; i ++ )
+    {
+        int b = a[i] -a[i-1];
+        add(tr1,i,b);
+        add(tr2,i,(LL)b*i);
+    }
+    while(m--){
+        char op[2];
+        int l,r,d;
+        scanf("%s%d%d",op,&l,&r);
+        if(*op=='C'){
+            scanf("%d",&d);
+            add(tr1,l,d), add(tr2,l,l*d);
+            add(tr1,r+1,-d), add(tr2,r+1,(r+1)*-d);
+        }else{
+            printf("%lld\n",pre(r)-pre(l-1));
+        }
+    }
+    return 0;
+}

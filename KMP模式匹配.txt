@@ -1,0 +1,35 @@
+int get_nextval(char *str,int *nextval){
+    memset(nextval,0,sizeof nextval);
+    int k=-1;
+    nextval[0]=-1;
+    for(int i=1;i<strlen(str);i++){
+        while(k!=-1&&str[i-1]!=str[k]) k=nextval[k];
+        k++;
+        if(str[k]!=str[i]) nextval[i]=k;
+        else nextval[i]=nextval[k];
+    }
+	return 0;
+}
+int KMP(char *src,char *des)        //在src中查找是否存在子串des
+{
+    int ld=strlen(des),ls=strlen(src);
+    int *nextval=new int[ld];          //空间视具体情况来定，通常是des长度
+    get_nextval(des,nextval);
+    int i=0,j=0;
+    while (i<ld&&j<ls)
+    {
+        if(des[i]==src[j]){
+            i++;j++;
+        }
+        else{
+            if(nextval[i]==-1){
+                i=0;j++;
+            }
+            else
+                i=nextval[i];
+        }
+    }
+    delete []nextval;
+    if(i==ld) return j-ld;      //返回匹配位置下标(从0开始)
+    else return -1;     //匹配失败
+}

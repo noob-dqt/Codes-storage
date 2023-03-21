@@ -1,0 +1,133 @@
+朴素并查集（路径压缩）
+int father[N];
+int init(){		//初始化
+	for(int i=0;i<N;i++) father[i]=i;
+	return 0;
+}
+int find(int x){
+	if(x==father[x]) return x;
+	return father[x]=find(father[x]);	//路径压缩，效率高，但是会破坏原有树形结构
+}
+int Union(int x,int y){		//将xy合并，朴素
+	int fax=find(x);
+	int fay=find(y);
+	father[fax]=fay;
+	return 0;
+}
+在合并的过程中有两个节点待合并，选哪一个节点的祖先节点作为父节点会直接影响到树的形态，因此可以以秩（树的深度）为依据
+对两个节点进行合并.
+以下即为带秩的并查集：
+int father[N];
+int rank[N];
+int  init(int n)
+{
+    for(int i=0;i<n;i++)
+    {
+        father[i]=i;
+        rank[i]=0;   // 初始树的高度为0
+    }
+    return 0;
+}
+int find(int x){
+	if(x==father[x]) return x;
+	return father[x]=find(father[x]);	//路径压缩，效率高，但是会破坏原有树形结构
+}
+int Union(int x,int y)
+{
+    x=find(x);
+    y=find(y);
+    if(x==y) return 0;
+    if(rank[x]<rank[y])
+        parent[x]=y;  // 合并是从rank小的向rank大的连边
+    else
+    {
+        parent[y]=x;
+        if(rank[x]==rank[y]) rank[x]++;
+    }
+    return 0;
+}
+并查集应用之一：求最小生成树时维护节点集合
+最小生成树Kruskal算法：(排序选边，并且选的边两个顶点不能处于同一个集合，这个过程用并查集维护)
+例题：给定n个节点m条边，接着m行输入，每行三个数字，第一二个数字分别代表边的两个节点，第三个数代表边的权值，求让图联通
+的最小权值，若不能联通输出-1
+代码：
+#include <bits/stdc++.h>
+using namespace std;
+#define reset(x) memset(x, 0, sizeof(x))
+#define Q_in_out                 \
+    ios::sync_with_stdio(false); \
+    cin.tie(0);                  \
+    cout.tie(0);
+typedef long long int ll;
+typedef long double ld;
+typedef pair<int, int> P;
+#define cd(x) scanf("%d",&x);
+#define forl(l,r) for(int i=l;i<r;i++) 
+#define forr(r,l) for(int i=r;i>=l;i--)
+const int N = 1e4+5;
+const int modp = 1e9+7;
+const int inf = 0x3f3f3f3f;
+const double eps = 1e-6;
+const double pi = acos(-1.0);
+const double e = 2.718281828459045;
+struct node
+{
+	int from;
+	int to;
+	int val;
+	bool operator<(const node&tp){
+		return val<tp.val;
+	}
+}a[3005];
+int father[3005];
+int Rank[3005];
+int init()
+{
+    for(int i=0;i<3005;i++)
+    {
+        father[i]=i;
+        Rank[i]=0;   // 初始树的高度为0
+    }
+    return 0;
+}
+int find(int x){
+	if(x==father[x]) return x;
+	return father[x]=find(father[x]);
+}
+int Union(int x,int y){		//将xy合并，朴素
+	int fax=find(x);
+	int fay=find(y);
+	if(fax==fay) return 0;
+	if(Rank[fax]<Rank[fay]){
+		father[fax]=fay;
+	}
+	else{
+		father[fay]=fax;
+		if(Rank[fax]==Rank[fay]) Rank[fax]++;
+	}
+	return 0;
+}
+int main(){
+	init();
+	int n,m;
+	cd(n);cd(m);
+	for(int i=0;i<m;i++){
+		scanf("%d%d%d",&a[i].from,&a[i].to,&a[i].val);
+	}
+	//按照价值升序排序
+	sort(a,a+m);
+	//依次选择
+	int cnt=0;//统计选入的边数
+	int sum=0;	//统计总价值
+	for(int i=0;i<m;i++){
+		if(find(a[i].from)!=find(a[i].to)){
+			sum+=a[i].val;
+			Union(a[i].from,a[i].to);
+			cnt++;
+		}
+		if(cnt==n-1) break;	//已经联通可以不遍历后面的边
+	}
+	if(cnt==n-1) cout<<sum;
+	else cout<<-1;
+	return 0;
+}

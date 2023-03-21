@@ -1,0 +1,27 @@
+//求割点
+vector<int>mp[105];
+int dfn[105],low[105];
+int cnt;
+set<int>res;	//存放割点
+void init(){
+    res.clear();
+    cnt=1;
+    reset(dfn);reset(low);
+    for(int i=0;i<105;i++) mp[i].clear();
+}
+void tarjan(int x){
+    dfn[x]=low[x]=cnt++;
+    int cnt_son=0;
+    for(int v:mp[x]){
+        if(!dfn[v]){
+            cnt_son++;
+            tarjan(v);
+            low[x]=min(low[x],low[v]);
+            if(low[v]>=dfn[x]&&dfn[x]!=1) res.insert(x);
+            else if(x==1&&cnt_son>=2) res.insert(x);
+        }
+        else{
+            low[x]=min(low[x],dfn[v]);
+        }
+    }
+}
