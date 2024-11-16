@@ -1,11 +1,29 @@
-贝祖定理（裴蜀定理）：如果a、b是整数，那么一定存在整数x、y使得ax+by=gcd(a,b)。
-换句话说，如果ax+by=m有解，那么m一定是gcd(a,b)的若干倍。（可以来判断一个这样的式子有没有解）
-有一个直接的应用就是 如果ax+by=1有解，那么gcd(a,b)=1；
 （欧几里得）辗转相除求最大公因数：
 int gcd(int a,int b){
     return b==0 ? a : gcd(b,a%b);
 }
-扩展欧几里得：找满足ax+by=gcd(a,b)的解x,y
+非递归版欧几里得算法：
+int gcd(int a,int b)
+{
+    int t;
+    while(b){
+        t=b;
+        b=a%b;
+        a=t;
+    }
+    return a;
+}
+
+贝祖定理（裴蜀定理）：如果a、b是整数，那么一定存在整数x、y使得ax+by=gcd(a,b)。
+换句话说，如果ax+by=m有解，那么m一定是gcd(a,b)的若干倍。（可以来判断一个这样的式子有没有解）
+有一个直接的应用就是 如果ax+by=1有解，那么gcd(a,b)=1；
+
+扩展欧几里得：找满足ax+by=gcd(a,b)的解x,y：
+有gcd(a,b)=gcd(b,a%b)=b*x1+(a%b)*y1，又有a%b=a-(a/b)*b，
+则gcd(a,b)=a*x+b*y=b*x1+(a-(a/b)*b)*y1=a*y1+(x1-(b/b)*y1)*b。
+可以得到x=y1，y=(x1-(b/b)*y1)。现在我们知道某一层的系数就可以知道上一层的系数，
+因此我们只需要知道最底层的系数，那么也就可以知道最高层的系数了，最后的x就可以求出来了
+
 void exgcd(int a, int b, int &x, int &y) {
     if (b == 0) {
         x = 1;
@@ -18,7 +36,29 @@ void exgcd(int a, int b, int &x, int &y) {
     y = x1 - a / b * y1;
 }
 调用：exgcd(a,b,x,y)，xy是引用，函数计算后定义的xy就是方程ax+by=gcd(a,b)结果
-
+非递归版扩展欧几里得算法：
+帮助理解，对于ax+by=gcd(a,b)，初始时，假设x=1,y=0,x'=0,y'=1
+增广矩阵为：
+x   y   a
+x'  y'  b
+进行矩阵初等变换：交换r1，r2后，r2-a/b*r1：
+   x'        y'         b
+x-a/b*x'  y-a/b*y'  a-[a/b]*b
+一直重复上述变换，直到第二行第三列a-[a/b]*b等于0时，矩阵的第一行前两列对应于解x,y，
+也即迭代的时候，用第二行更新第一行，旧的第一行值减掉a/b乘第二行的值更新第二行，不断迭代
+代码
+void exgcd(int a,int b,int&x,int&y)
+{
+    x=1,y=0;
+    int x1=0,y1=1,a1=a,b1=b;
+    while(b1){
+        int tx=x1,ty=y1,ta=b1;
+        x1=x-a1/b1*x1;
+        y1=y-a1/b1*y1;
+        b1=a1-a1/b1*b1;
+        x=tx;y=ty;a1=ta;
+    }
+}
 
 求逆元：逆元就是形如 a * x ≡ 1 (mod p) ，且ap互质，其中x和a互为模p含义下的逆元
 情况1：
