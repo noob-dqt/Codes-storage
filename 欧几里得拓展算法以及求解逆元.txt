@@ -1,4 +1,4 @@
-贝祖定理：如果a、b是整数，那么一定存在整数x、y使得ax+by=gcd(a,b)。
+贝祖定理（裴蜀定理）：如果a、b是整数，那么一定存在整数x、y使得ax+by=gcd(a,b)。
 换句话说，如果ax+by=m有解，那么m一定是gcd(a,b)的若干倍。（可以来判断一个这样的式子有没有解）
 有一个直接的应用就是 如果ax+by=1有解，那么gcd(a,b)=1；
 （欧几里得）辗转相除求最大公因数：
@@ -6,28 +6,44 @@ int gcd(int a,int b){
     return b==0 ? a : gcd(b,a%b);
 }
 扩展欧几里得：找满足ax+by=gcd(a,b)的解x,y
-int exgcd(int a,int b,int &x,int &y){
-    if(b==0){
-        x=1;
-        y=0;
-        return a;
+void exgcd(int a, int b, int &x, int &y) {
+    if (b == 0) {
+        x = 1;
+        y = 0;
+        return;
     }
-    int t=exgcd(b,a%b,x,y);
-    //计算当前a,b状态下的x,y，并返回给递归的上一层状态
-    int x0=x,y0=y;	//先把上层递归结果x,y暂存
-    x=y0;
-    y=x0-(a/b)*y0;
-    return t;	//t为a,b最大公约数
+    int x1, y1;
+    exgcd(b, a % b, x1, y1);
+    x = y1;
+    y = x1 - a / b * y1;
 }
+调用：exgcd(a,b,x,y)，xy是引用，函数计算后定义的xy就是方程ax+by=gcd(a,b)结果
 
-费马小定理
 
-∵ap≡a(modp)∴ap−2≡1a(modp)
-所以说a^(-1)≡a^(p-2)(modp)
-复杂O(logp)
+求逆元：逆元就是形如 a * x ≡ 1 (mod p) ，且ap互质，其中x和a互为模p含义下的逆元
+情况1：
+当模数p为一个质数时且a不是p倍数时，a在模p含义下的模逆元为a^(p-2) mod p，由费马小定理证：
+∵a^(p-1)≡1(modp) ∴a*a^(p−2)≡1(modp)
+所以说a^(-1)≡a^(p-2)(modp)，可由快速幂求解出a^(p-2)
 
-扩展欧几里得
-ax+py=1的一组解 (x,y) ，x 是 a 关于 p 的逆元， y 是 p 关于 a 的逆元
-证明：两边同时模 p，ax+py=1ax%p+py%p=1%p，ax%p=1%p，ax≡1(modp)
-所以 x 是 a 关于 p 的逆元，反之可以证明 y
-复杂O(logp)
+情况2：
+当p不是质数时，使用扩展欧几里得算法求解
+由a * x ≡ 1 (mod p)变形得：ax+py=1，也即要求一组解 (x,y)，其中x是a模p下的逆元，y是p模a下的逆元
+证明：两边同时模p有：ax+py=1 => ax%p+py%p=1%p =>ax%p=1%p，也即ax和1在模p意义下同余，ax≡1(modp)
+所以x是a关于p的逆元，同理两边同时模a 可以证明y和p在模a时互为逆元，代码如下：
+
+void extend_gcd(ll a, ll b, ll &x, ll &y){  //求ax+by=gcd(a,b)的解
+    if(b == 0){
+        x = 1, y = 0;
+        return;
+    }
+    extend_gcd(b, a % b, x, y);
+    ll tmp = x;
+    x = y;
+    y = tmp - (a / b) * y;
+}
+ll mod_inverse(ll a, ll p){ //求a在模p含义下的逆元，要求a和p互质，即gcd(a,p)=1
+    ll x, y;
+    extend_gcd(a, p, x, y);
+    return (x % p + p) % p;
+}
