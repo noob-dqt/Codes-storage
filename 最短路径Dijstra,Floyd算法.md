@@ -60,6 +60,7 @@ void dijstra(int k){
 ```
 
 #### Floyd（任意两点间的最短距离）
+```
 vector<vector<pair<int,int>>>mp(105);
 int n,m;
 int sht[105][105];
@@ -84,3 +85,4 @@ void floyd(){
         }
     }
 }
+```
