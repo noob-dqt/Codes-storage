@@ -14,3 +14,23 @@ void decomp(int n){
     }
     if(n>1) cout<<n<<" 1\n";    //可能还剩下一个质数
 }
+//在分解质因数的前提下，给定一个数n，可以分解其质因数p1^(k1),p2^(k2),...,pn^(kn)
+根据乘法原理，n的所有因子个数为：(k1+1)*(k2+1)*...*(kn+1)
+代码实现如下：
+void decomp(int n){
+    int res=1;  //n的因子个数
+    for(int i=2;i*i<=n;i++){
+        if(n%i==0){
+            int cnt=0;
+            while (n%i==0)
+            {
+                cnt++;
+                n/=i;   
+            }
+            res*=(cnt+1);
+            cout<<i<<' '<<cnt<<'\n';    //i是质数，cnt是对应分解出的数量
+        }
+    }
+    if(n>1) {cout<<n<<" 1\n";res*=2;}    //可能还剩下一个质数
+    cout<<res;  // 因子个数
+}
