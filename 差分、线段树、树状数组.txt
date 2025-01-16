@@ -48,7 +48,7 @@ int query(int p,int l,int r){
 }
 
 单点修改操作：
-void change(int p,int x,int v){     //将a[x]修改为v
+void change(int p,int x,int v){     //将a[x]修改为v，传入的p是树根，通常是1
     if(t[p].l==t[p].r) {
         t[p].maxv=t[p].minv=v;
         return ;
