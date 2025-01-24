@@ -130,3 +130,21 @@ int main(){
     }
     return 0;
 }
+
+ST表，静态查询区间最值
+const int mod=1e9+7,N=1e5+5;
+int a[N],st[N][50];
+int n,q;
+int getmin(int l, int r) # 查询l,r区间最值
+{
+  int pos=log(r-l+1)/log(2);
+  return min(st[l][pos],st[r-(1<<pos)+1][pos]);
+}
+void init(){
+	for(int i=1;i<=n;i++) st[i][0]=a[i]; # a下标从1开始
+	for(int i=1;i<=20;i++)
+	{
+    	for(int j=1;j<=n;j++)
+      		if(j+(1<<i)<=n+1) st[j][i]=min(st[j][i-1],st[j+(1<<(i-1))][i-1]);
+  	}		
+}

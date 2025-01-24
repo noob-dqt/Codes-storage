@@ -71,3 +71,28 @@ vector<int>sub(vector<int>a,vector<int>b){  //a-b且a>b
     return res;
 }
 
+乘法：
+vector<int>mul(string x,string y){	
+	vector<int>a,b;
+	for(char c:x) a.push_back(c-'0');
+	for(char c:y) b.push_back(c-'0');
+	reverse(a.begin(),a.end());
+	reverse(b.begin(),b.end());
+	int n=a.size(),m=b.size();
+	vector<int>res(n+m,0);
+	int car = 0;
+	for (int j = 0; j < b.size(); j++)
+	{
+		for (int i = 0; i < a.size(); i++)
+		{
+			res[i+j] += a[i] * b[j] + car;
+			car = res[i+j] / 10;
+			res[i+j] %= 10; 
+		}  
+		res[n+j] = car;
+		car = 0;
+	}
+    while (res.size()>1&&res.back()==0) res.pop_back();
+	reverse(res.begin(),res.end());	
+	return res;
+}
