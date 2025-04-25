@@ -20,6 +20,7 @@ for(int i=1;i<=n;i++)
 struct nd
 {
     int l,r;
+    int lazy;
     int maxv,minv;
 }t[N*4];		//通常开到数组长度4倍
 
@@ -57,6 +58,31 @@ void change(int p,int x,int v){     //将a[x]修改为v，传入的p是树根，
     t[p].maxv=max(t[p*2].maxv,t[p*2+1].maxv);
     t[p].minv=min(t[p*2].minv,t[p*2+1].minv);
 }
+void down(int p){
+	t[2 * p].lazy += t[p]. lazy;
+	t[2 * p + 1].lazy += t[p].lazy;
+	t[2 * p].val += t[p].lazy * (t[2 * p].r - t[2 * p].l + 1);
+	t[2 * p + 1].val += t[p].lazy * (t[2 * p + 1].r - t[2 * p + 1].val + 1);
+	t[p].lazy = 0;
+}
+区间修改操作：
+void change_interval(int p, int x, int y, int add) //[x,y]都加上add
+{
+	if (x <= t[p].l && y >= t[p].r)
+	{
+		t[p].val += add * (t[p].r - t[p].l + 1);
+		t[p].lazy += add;
+		return ;
+	}
+	if (t[p].lazy) down(p);
+	int mid = (t[p].l + t[p].r)>>1;
+	if (x <= mid) change_interval(2 * p, x, y, add);
+	if (y > mid) change_interval(2 * p + 1, x, y, add);
+	//t[p].val = t[2 * p].val + t[2 * p + 1].val;
+    t[p].maxv = max(t[2 * p].maxv , t[2 * p + 1].maxv);
+    t[p].minv = max(t[2 * p].minv , t[2 * p + 1].minv);
+}
+
 
 树状数组：维护序列前缀和、logN查询区间和，单点修改并维护序列前缀和
 int lowbit(int x){  //非负整数x在二进制下最低位的1及其后面所有0组成的数
