@@ -36,7 +36,6 @@ void build(int p,int l,int r){
     t[p].maxv=max(t[p*2].maxv,t[p*2+1].maxv);
     t[p].minv=min(t[p*2].minv,t[p*2+1].minv);
 }
-
 查询操作：（查最大值）
 int query(int p,int l,int r){
     if(l<=t[p].l&&r>=t[p].r) return t[p].maxv;
@@ -46,7 +45,6 @@ int query(int p,int l,int r){
     if(r>m) res=max(res,query(p*2+1,l,r));
     return res;
 }
-
 单点修改操作：
 void change(int p,int x,int v){     //将a[x]修改为v，传入的p是树根，通常是1
     if(t[p].l==t[p].r) {
